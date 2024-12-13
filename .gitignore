@@ -1,0 +1,12 @@
+# 元数据文件
+_metadata/
+.metadata/
+
+# IDE 相关文件
+.idea/
+.vscode/
+
+# 其他常见需要忽略的文件
+node_modules/
+*.log
+.DS_Store
