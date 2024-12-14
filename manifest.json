@@ -3,24 +3,19 @@
     "name": "Blacklist",
     "version": "1.0",
     "description": "一个chrome浏览器插件，用来屏蔽不想看到的内容。",
-    "permissions": ["storage", "declarativeNetRequest", "declarativeNetRequestFeedback"],
-    "background": {
-      "service_worker": "background.js"
-    },
-    "declarative_net_request": {
-        "rule_resources": [
-          {
-            "id": "ruleset_1",
-            "enabled": true,
-            "path": "rules.json"
-          }
-        ]
-    },
+    "permissions": ["storage"],
+    "content_scripts": [
+      {
+        "matches": ["*://*.bilibili.com/*"],
+        "js": ["content.js"]
+      }
+    ],
     "action": {
       "default_popup": "popup.html",
       "default_icon": "icon.png"
     },
-    "icons": {
-      "48": "icon.png"
-    }
+    "web_accessible_resources": [{
+      "resources": ["config.json"],
+      "matches": ["<all_urls>"]
+    }]
   }

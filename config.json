@@ -1,0 +1,80 @@
+{
+    "_common": {
+        "selector": [
+
+        ]
+    },
+    "sit_config": {
+        "https://www.bilibili.com/": {
+            "css_selector": [
+                ".floor-single-card",
+                ".bili-live-card",
+                ".recommended-swipe"
+            ],
+            "filter": {
+                ".bili-video-card": {
+                    ".bili-video-card__info--tit": {
+                        "leaf_node": true,
+                        "rules": [
+                            {
+                                "attribute": "title",
+                                "type": "regexp",
+                                "value_set": [
+                                    "niko",
+                                    "donk",
+                                    "zywoo",
+                                    "cs",
+                                    "csgo",
+                                    "major",
+                                    "TGA",
+                                    "黑神话",
+                                    "《",
+                                    "》",
+                                    "【",
+                                    "】",
+                                    "?",
+                                    "？",
+                                    "!",
+                                    "！",
+                                    "。",
+                                    " "
+                                ]
+                            }
+                        ]
+                    },
+                    ".bili-video-card__info--author": {
+                        "leaf_node": true,
+                        "rules": [
+                            {
+                                "attribute": "title",
+                                "type": "regexp",
+                                "value_set": [
+                                    "cs2",
+                                    "csgo"
+                                ]
+                            }
+                        ]
+                    },
+                    ".bili-video-card__info--owner": {
+                        "leaf_node": true,
+                        "rules": [
+                            {
+                                "attribute": "href",
+                                "type": "function",
+                                "function": "bilibili_mid_match",
+                                "value_set": [
+                                    "520819684",
+                                    "28626598",
+                                    "6336952",
+                                    "456664753",
+                                    "480810988",
+                                    "286737038"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}
