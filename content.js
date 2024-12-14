@@ -20,8 +20,10 @@ class ContentFilter {
 
     getConfigForCurrentSite() {
         const currentUrl = window.location.href;
+        debugLog("current_url: "+currentUrl)
         for (let siteUrl in this.config.sit_config) {
             if (currentUrl.startsWith(siteUrl)) {
+                debugLog("match: "+siteUrl, true)
                 return this.config.sit_config[siteUrl];
             }
         }
@@ -30,14 +32,20 @@ class ContentFilter {
 
     removeByCssSelector() {
         if (!this.currentSiteConfig?.css_selector) return;
-        
+        // 如果为空
+        if (this.currentSiteConfig.css_selector.length == 0) return;
         const selectorString = this.currentSiteConfig.css_selector.join(',');
         const elements = document.querySelectorAll(selectorString);
         elements.forEach(element => element.remove());
     }
 
 evaluateRule(element, rule) {
-        const value = element.getAttribute(rule.attribute);
+        var value = null
+        if (rule.text_content == true) {
+            value = element.textContent
+        } else {
+            value = element.getAttribute(rule.attribute);
+        }
         
         switch (rule.type) {
             case 'regexp':
@@ -74,10 +82,16 @@ evaluateRule(element, rule) {
     checkElementRules(element, rules) {
         for (const rule of rules) {
             const isMatch = this.evaluateRule(element, rule);
+            var value = null
+            if (rule.text_content == true) {
+                value = element.textContent
+            } else {
+                value = element.getAttribute(rule.attribute);
+            }
             if (isMatch) {
                 return {
                     matched: true,
-                    value: rule.attribute+": "+element.getAttribute(rule.attribute)
+                    value: (rule.text_content? "textContent" : rule.attribute) +": "+value
                 };
             }
         }
@@ -136,13 +150,19 @@ evaluateRule(element, rule) {
 // 将 ContentFilter 的初始化移到异步函数中
 async function initializeContentFilter() {
     try {
-        // 获取配置文件的 URL
-        const configUrl = chrome.runtime.getURL('config.json');
-        // 加载配置文件
-        const response = await fetch(configUrl);
-        const config = await response.json();
+        // 首先尝试从存储中获取配置
+        const storage = await chrome.storage.sync.get('config');
+        let config;
         
-        // 初始化过滤器
+        if (storage.config) {
+            // 使用存储的配置
+            config = storage.config;
+        } else {
+            // 如果没有存储的配置，使用默认配置
+            const response = await fetch(chrome.runtime.getURL('config.json'));
+            config = await response.json();
+        }
+        
         const filter = new ContentFilter(config);
         filter.start();
     } catch (error) {
